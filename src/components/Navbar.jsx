@@ -26,6 +26,14 @@ export default function Navbar({ user, currentPage, onNavigate, onLogout }) {
               👤 Profile
             </button>
           )}
+          {user && user.role === 'ROLE_ADMIN' && (
+            <button
+              className={`nav-link ${currentPage === 'admin' ? 'active' : ''}`}
+              onClick={() => onNavigate('admin')}
+            >
+              🛠️ Admin
+            </button>
+          )}
         </div>
       </div>
 

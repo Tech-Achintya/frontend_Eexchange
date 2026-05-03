@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
 import Navbar from './components/Navbar';
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
       />
       {page === 'home' && <HomePage user={user} />}
       {page === 'profile' && <ProfilePage user={user} onUpdateUser={setUser} />}
+      {page === 'admin' && user?.role === 'ROLE_ADMIN' && <AdminPage user={user} />}
       {page === 'login' && <AuthPage onLogin={handleLogin} />}
     </div>
   );

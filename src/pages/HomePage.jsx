@@ -34,6 +34,19 @@ export default function HomePage({ user }) {
     setSelectedCategory(prev => prev === catId ? null : catId);
   };
 
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm('Admin: Delete this item?')) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/items/delete/${itemId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setItems(prev => prev.filter(i => i.id !== itemId));
+      }
+    } catch (e) { console.error(e); }
+  };
+
   return (
     <div className="home-page">
       {/* Hero banner */}
@@ -140,6 +153,13 @@ function ItemCard({ item, currentUser }) {
 
         <div className="item-footer">
           <span className="item-price">₹{item.price?.toLocaleString('en-IN')}</span>
+          
+          {currentUser?.role === 'ROLE_ADMIN' && (
+            <div className="admin-actions">
+              <button className="admin-del-btn" onClick={() => handleDeleteItem(item.id)}>🗑️</button>
+            </div>
+          )}
+
           <div className="item-seller-info">
             <span className="item-seller">Seller</span>
             {currentUser ? (

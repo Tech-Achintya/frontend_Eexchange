@@ -111,6 +111,24 @@ export default function ProfilePage({ user, onUpdateUser }) {
     }
   };
 
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm('Are you sure you want to delete this item forever?')) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/items/delete/${itemId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token()}` },
+      });
+      if (res.ok) {
+        fetchMyItems();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to delete item');
+      }
+    } catch {
+      alert('Network error');
+    }
+  };
+
   const TABS = [
     { id: 'info', label: '👤 My Info' },
     { id: 'posts', label: '📦 My Posts' },
@@ -284,11 +302,17 @@ export default function ProfilePage({ user, onUpdateUser }) {
                     </div>
                     <div className="my-item-right">
                       <span className="item-price">₹{item.price?.toLocaleString('en-IN')}</span>
-                      <span className={`tag ${item.status === 'SOLD' ? 'tag-sold' : 'tag-available'}`}>
-                        {item.status}
+                      <span className={`tag ${
+                        item.status === 'SOLD' ? 'tag-sold' : 
+                        item.status === 'PENDING' ? 'tag-pending' : 'tag-available'
+                      }`}>
+                        {item.status === 'PENDING' ? 'Pending Approval' : item.status}
                       </span>
                       <button className="edit-btn" onClick={() => openEdit(item)}>
                         ✏️ Edit
+                      </button>
+                      <button className="delete-btn" onClick={() => handleDeleteItem(item.id)}>
+                        🗑️ Delete
                       </button>
                     </div>
                   </div>
